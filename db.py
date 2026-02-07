@@ -7,30 +7,11 @@ cur.execute("""
 CREATE TABLE IF NOT EXISTS users(
     user_id INTEGER PRIMARY KEY,
     balance INTEGER DEFAULT 0,
-    ref_by INTEGER DEFAULT 0,
+    last_daily INTEGER DEFAULT 0,
+    ref INTEGER DEFAULT 0,
     ref_valid INTEGER DEFAULT 0,
     deposit_count INTEGER DEFAULT 0,
-    weekly_deposit INTEGER DEFAULT 0,
-    last_daily INTEGER DEFAULT 0,
-    newbie_claimed INTEGER DEFAULT 0
-)
-""")
-
-cur.execute("""
-CREATE TABLE IF NOT EXISTS deposits(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    amount INTEGER,
-    status INTEGER DEFAULT 0
-)
-""")
-
-cur.execute("""
-CREATE TABLE IF NOT EXISTS withdrawals(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    amount INTEGER,
-    status INTEGER DEFAULT 0
+    newbie INTEGER DEFAULT 0
 )
 """)
 
@@ -49,14 +30,13 @@ def get_user(uid):
     if not u:
         cur.execute("INSERT INTO users(user_id) VALUES(?)", (uid,))
         conn.commit()
-    return u
 
-def add_balance(uid, amt):
-    cur.execute("UPDATE users SET balance = balance + ? WHERE user_id=?", (amt, uid))
+def add(uid, amount):
+    cur.execute("UPDATE users SET balance = balance + ? WHERE user_id=?", (amount, uid))
     conn.commit()
 
-def sub_balance(uid, amt):
-    cur.execute("UPDATE users SET balance = balance - ? WHERE user_id=?", (amt, uid))
+def sub(uid, amount):
+    cur.execute("UPDATE users SET balance = balance - ? WHERE user_id=?", (amount, uid))
     conn.commit()
 
 def balance(uid):
